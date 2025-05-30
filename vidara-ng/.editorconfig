@@ -1,0 +1,57 @@
+# EditorConfig for Angular 19 project
+# See https://editorconfig.org
+
+root = true
+
+# General settings
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2           # Angular uses 2 spaces by convention
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# TypeScript files
+[*.ts]
+indent_size = 2
+quote_type = single
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 120     # Reasonable limit for readability
+curly_bracket_next_line = false
+
+# HTML templates
+[*.html]
+indent_style = space
+indent_size = 2
+max_line_length = 120
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# SCSS/CSS stylesheets
+[*.{scss,css}]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# JSON and config files
+[*.json]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = false
+
+# Markdown files
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+# YAML files (e.g., GitHub Actions, CI/CD pipelines)
+[*.yml]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true

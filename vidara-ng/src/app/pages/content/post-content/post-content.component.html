@@ -1,0 +1,71 @@
+<div class="card custom-card">
+    <!-- Top Section -->
+    <div class="flex items-center mb-2">
+        <p-avatar class="flex-none mr-2" label="P" size="xlarge" shape="circle"></p-avatar>
+        <p-button (onClick)="showDialog()" class="flex-1 custom-button" label="Create new post..." severity="secondary" outlined [fluid]="true" [style]="{ height: '4rem', 'font-size': '1.25rem' }"></p-button>
+    </div>
+
+    <!-- Separator -->
+    <hr class="my-4 border" />
+
+    <!-- Bottom Section with 3 Buttons -->
+    <div class="flex justify-between gap-2">
+        <p-button (onClick)="showDialog()" label="Live Stream" icon="pi pi-video" severity="danger" text class="flex-1" [fluid]="true" size="large" [style]="{ height: '3rem' }"></p-button>
+        <p-button (onClick)="showDialog()" label="Photo/Video" icon="pi pi-camera" severity="success" text class="flex-1" size="large" [fluid]="true" [style]="{ height: '3rem' }"></p-button>
+        <p-button (onClick)="showDialog()" label="Others" icon="pi pi-plus" severity="help" text class="flex-1" size="large" [fluid]="true" [style]="{ height: '3rem' }"></p-button>
+    </div>
+</div>
+
+<p-dialog header="Create Content" [closeOnEscape]="true" [dismissableMask]="true" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }">
+    <p-editor [(ngModel)]="text" placeholder="Compose new post..." [style]="{ height: '80px' }">
+        <ng-template #header>
+            <span class="ql-formats">
+                <select class="ql-size" aria-label="Font Size">
+                    <option selected></option>
+
+                    <option value="large"></option>
+                </select>
+            </span>
+            <span class="ql-formats">
+                <button type="button" class="ql-bold" aria-label="Bold"></button>
+                <button type="button" class="ql-italic" aria-label="Italic"></button>
+                <button type="button" class="ql-underline" aria-label="Underline"></button>
+            </span>
+            <span class="ql-formats">
+                <button type="button" class="ql-my-image" aria-label="Upload Image">
+                    <i class="pi pi-image"></i>
+                </button>
+            </span>
+        </ng-template>
+    </p-editor>
+    <p-fileupload
+        #fu
+        name="demo[]"
+        url="https://www.primefaces.org/cdn/api/upload.php"
+        (onUpload)="onUpload($event)"
+        [multiple]="true"
+        accept="image/*"
+        maxFileSize="1000000"
+        mode="advanced"
+        chooseLabel="Browse"
+        showCancelButton="false"
+        showUploadButton="false"
+    >
+        <ng-template #header> </ng-template>
+        <ng-template #empty>
+            <div class="flex items-center justify-center flex-col">
+                <i class="pi pi-cloud-upload !border-2 !rounded-full !p-8 !text-4xl !text-muted-color"></i>
+                <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
+            </div>
+        </ng-template>
+        <ng-template #content>
+            <ul *ngIf="uploadedFiles.length">
+                <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+            </ul>
+        </ng-template>
+    </p-fileupload>
+    <p-toast />
+    <div class="gap-2 mt-6">
+        <p-button label="Post" (onClick)="visible = false" disabled="true" [fluid]="true" />
+    </div>
+</p-dialog>

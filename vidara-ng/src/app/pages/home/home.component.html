@@ -1,0 +1,9 @@
+<div class="home-sidebar">Home side bar</div>
+
+<div class="home-container">
+    <app-post-content></app-post-content>
+    <ng-container *ngFor="let item of contents">
+        <app-content [content]="item"></app-content>
+        <br />
+    </ng-container>
+</div>
