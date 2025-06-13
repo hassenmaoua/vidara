@@ -47,10 +47,20 @@ public class RegisterRequest {
     @Schema(description = "Birth Date of the user", example = "01/01/2000")
     private LocalDate birthDate;
 
-    @Schema(description = "Phone  number of the user", example = "55000000")
-    @Pattern(regexp = "^\\+?\\(?\\d{1,4}\\)?[-\\s./\\d]*$")
-    private String phone;
+//    @Schema(description = "Phone  number of the user", example = "55000000")
+//    @Pattern(regexp = "^\\+?\\(?\\d{1,4}\\)?[-\\s./\\d]*$")
+//    private String phone;
 
     @Schema(description = "Gender of the user", example = "MALE")
     private UserGender gender;
+
+    @Schema(description = "Location of user", example = "TN")
+    @NotEmpty(message = "Country is mandatory")
+    @NotNull(message = "Country is mandatory")
+    private String country;
+
+    @Schema(description = "Default language of application", example = "EN")
+    @NotEmpty(message = "Language is mandatory")
+    @NotNull(message = "Language is mandatory")
+    private String language;
 }

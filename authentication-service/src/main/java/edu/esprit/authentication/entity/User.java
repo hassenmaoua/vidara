@@ -53,6 +53,12 @@ public class User implements UserDetails, Principal {
     @Column(name = "avatar", nullable = true)
     String avatar;
 
+    @Column(name = "cover", nullable = true)
+    String cover;
+
+    @Column(name = "bio", nullable = true)
+    String bio;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
     UserGender gender;
@@ -60,8 +66,14 @@ public class User implements UserDetails, Principal {
     @Column(name = "birth_date")
     LocalDate birthDate;
 
-    @Column(name = "phone")
-    String phone;
+    @Column(name = "country")
+    String country;
+
+    @Column(name = "language")
+    String language;
+
+//    @Column(name = "phone")
+//    String phone;
 
     @Column(name = "locked")
     boolean accountLocked;

@@ -5,10 +5,12 @@ import edu.esprit.authentication.entity.User;
 import edu.esprit.authentication.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -79,21 +81,32 @@ public class UserService implements IUserService {
 
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public User get(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id '" + id + "' not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id '%s' not found", id)));
     }
 
     @Override
     public User get(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User with email '" + email + "' not found"));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with email '%s' not found", email)));
     }
 
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with email '%s' not found", username)));
+    }
 
     @Override
     public boolean emailExists(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean usernameExists(String username) {
+        return userRepository.existsByUsername(username) ;
     }
 
     @Override
@@ -111,7 +124,8 @@ public class UserService implements IUserService {
 
     @Override
     public User changePassword(Long userId, String oldPassword, String newPassword) {
-        var user = get(userId);
+        var user =  userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("User with id '%s' not found", userId)));
 
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
@@ -121,14 +135,16 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
-    public boolean userExists(String username) {
-        return userRepository.existsByUsername(username) || userRepository.existsByEmail(username);
-    }
 
     @Override
     public void disableAccount(User user) {
         user.setEnabled(false);
         userRepository.save(user);
+    }
+
+    @Cacheable(value = "usersByIds", key = "#ids")
+    @Override
+    public List<User> findUsersByIds(List<Long> ids) {
+        return userRepository.findAllById(ids);
     }
 }
