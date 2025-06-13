@@ -17,8 +17,13 @@ public class UserDTO {
     String firstName;
     String lastName;
     String fullName;
+    String avatar;
+    String cover;
+    String bio;
     UserGender gender;
     LocalDate birthDate;
+    String country;
+    String language;
     int age;
     String phone;
     List<String> roles;

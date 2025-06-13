@@ -4,6 +4,7 @@ import edu.esprit.authentication.dto.*;
 import edu.esprit.authentication.entity.User;
 import edu.esprit.authentication.service.auth.AuthService;
 import edu.esprit.authentication.service.user.UserService;
+import edu.esprit.authentication.utilis.UserMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,11 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterRequest request) {
-        if (userService.userExists(request.getEmail())) {
+        if (userService.usernameExists(request.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is already taken");
+        }
+
+        if (userService.emailExists(request.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already taken");
         }
 
@@ -49,20 +54,7 @@ public class AuthController {
     public ResponseEntity<UserDTO> getUserByToken(@RequestParam String token) {
         User user = service.getUserByToken(token);
 
-        UserDTO userDTO = UserDTO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .fullName(user.getFullName())
-                .gender(user.getGender())
-                .birthDate(user.getBirthDate())
-                .age(user.getAge())
-                .phone(user.getPhone())
-                .enabled(user.isEnabled())
-                .accountLocked(user.isAccountLocked())
-                .build();
+        UserDTO userDTO = UserMapper.toUserDTO(user);
 
         // Return the response received from the external API
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDTO);
