@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
+import { AuthService } from '../../pages/auth/auth.service';
 
 @Component({
     selector: 'app-menu',
@@ -18,6 +19,8 @@ import { AppMenuitem } from './app.menuitem';
 export class AppMenu {
     model: MenuItem[] = [];
 
+    constructor(private readonly authService: AuthService) {}
+
     ngOnInit() {
         this.model = [
             {
@@ -25,7 +28,7 @@ export class AppMenu {
                 items: [
                     { label: 'Home', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
                     { label: 'Subscriptions', icon: 'pi pi-fw pi-users', routerLink: ['/subscriptions'] },
-                    { label: 'My Profile', icon: 'pi pi-fw pi-user', routerLink: ['/profile'] }
+                    { label: 'My Profile', icon: 'pi pi-fw pi-user', routerLink: ['/' + this.authService.currentUser?.username] }
                 ]
             },
 

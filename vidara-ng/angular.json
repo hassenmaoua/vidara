@@ -26,6 +26,8 @@
                         "tsConfig": "tsconfig.app.json",
                         "inlineStyleLanguage": "scss",
                         "assets": [
+                            "src/assets",
+                            "src/favicon.ico",
                             {
                                 "glob": "**/*",
                                 "input": "public"
@@ -69,6 +71,9 @@
                         "development": {
                             "buildTarget": "vidara-ng:build:development"
                         }
+                    },
+                     "options": {
+                        "proxyConfig": "proxy.conf.json"
                     },
                     "defaultConfiguration": "development"
                 },

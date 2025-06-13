@@ -1,0 +1,275 @@
+<form [formGroup]="registerForm" (ngSubmit)="submit()">
+    <div class="flex flex-col justify-center w-full">
+        <div class="text-center mb-8 flex flex-col items-center">
+            <div class="w-32">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M18.1579 8.60503C20.614 10.1139 20.614 13.8861 18.1579 15.395L11.5263 19.4689C9.07017 20.9778 6 19.0917 6 16.074L6 7.92602C6 4.90827 9.07018 3.02218 11.5263 4.53105L18.1579 8.60503Z"
+                        stroke="var(--primary-color)"
+                        stroke-width="3"
+                    />
+                    <path d="M11.5263 19.4689C9.07017 20.9778 6 19.0917 6 16.074L6 7.92602C6 4.90827 9.07018 3.02218 11.5263 4.53105L18.1579 8.60503" stroke="#363853" stroke-width="3" stroke-linecap="round" />
+                </svg>
+            </div>
+            <div class="text-surface-700 dark:text-surface-200 text-6xl font-medium mb-4"><span class="text-primary">Vi</span>dara</div>
+            <span class="text-muted-color font-medium">Register in to continue</span>
+        </div>
+
+        <p-stepper [(value)]="activeStep" class="" [linear]="true">
+            <p-step-list>
+                <p-step [value]="1" class="flex flex-row flex-auto gap-2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <span
+                                class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                                [ngClass]="{
+                                    'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                    'border-surface': value > activeStep
+                                }"
+                            >
+                                <i class="pi pi-user"></i>
+                            </span>
+                        </button>
+                    </ng-template>
+                </p-step>
+
+                <p-step [value]="2" class="flex flex-row flex-auto gap-2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <span
+                                class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                                [ngClass]="{
+                                    'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                    'border-surface': value > activeStep
+                                }"
+                            >
+                                <i class="pi pi-star"></i>
+                            </span>
+                        </button>
+                    </ng-template>
+                </p-step>
+
+                <p-step [value]="3" class="flex flex-row flex-auto gap-2">
+                    <ng-template #content let-activateCallback="activateCallback" let-value="value">
+                        <button class="bg-transparent border-0 inline-flex flex-col gap-2" (click)="activateCallback()">
+                            <span
+                                class="rounded-full border-2 w-12 h-12 inline-flex items-center justify-center"
+                                [ngClass]="{
+                                    'bg-primary text-primary-contrast border-primary': value <= activeStep,
+                                    'border-surface': value > activeStep
+                                }"
+                            >
+                                <i class="pi pi-id-card"></i>
+                            </span>
+                        </button>
+                    </ng-template>
+                </p-step>
+            </p-step-list>
+
+            <p-step-panels>
+                <p-step-panel [value]="1">
+                    <ng-template #content>
+                        <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 30rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Create your account</div>
+                            <div class="flex flex-col mb-2">
+                                <label for="username" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Username</label>
+                                <p-iconfield class="w-full">
+                                    <p-inputicon class="pi pi-at"></p-inputicon>
+                                    <input pInputText id="username" type="text" placeholder="Username" class="w-full md:w-[30rem] mb-1" formControlName="username" [ngClass]="{ 'p-invalid': f['username'].touched && f['username'].errors }" fluid />
+                                </p-iconfield>
+                                <small *ngIf="f['username'].errors?.['required'] && f['username'].touched" class="p-error">Username is required</small>
+                            </div>
+
+                            <div class="flex flex-col mb-2">
+                                <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
+                                <p-iconfield class="w-full">
+                                    <p-inputicon class="pi pi-envelope"></p-inputicon>
+                                    <input pInputText id="email" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-1" formControlName="email" [ngClass]="{ 'p-invalid': f['email'].touched && f['email'].errors }" fluid />
+                                </p-iconfield>
+                                <small *ngIf="f['email'].errors?.['required'] && f['email'].touched" class="p-error">Email is required</small>
+                                <small *ngIf="f['email'].errors?.['email'] && f['email'].touched" class="p-error">Email is invalid</small>
+                            </div>
+
+                            <div class="flex flex-col mb-2">
+                                <label for="password" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
+                                <p-iconfield class="w-full">
+                                    <p-inputicon class="pi pi-lock z-20"></p-inputicon>
+                                    <p-password
+                                        id="password"
+                                        formControlName="password"
+                                        class="mb-2"
+                                        placeholder="Password"
+                                        [toggleMask]="true"
+                                        [fluid]="true"
+                                        [feedback]="true"
+                                        [ngClass]="{ 'p-invalid': f['password'].touched && f['password'].errors }"
+                                    >
+                                    </p-password>
+                                </p-iconfield>
+                            </div>
+                            <div class="flex flex-col">
+                                <div class="mb-4">
+                                    <div class="flex items-center">
+                                        <p-checkbox id="terms" formControlName="rememberMe" binary></p-checkbox>
+                                        <label for="terms" class="ms-2 text-surface-900 dark:text-surface-0 font-medium"> I have read the </label>
+                                        <p-button label="Terms and Conditions" styleClass="pl-0" [link]="true" (onClick)="showTerms()" />
+                                    </div>
+                                    <small *ngIf="!f['rememberMe'].value && f['rememberMe'].touched" class="p-error">You must agree to the terms</small>
+                                </div>
+                                <span class="font-medium text-surface-600 dark:text-surface-200">
+                                    Already have an account?
+                                    <a routerLink="/auth/login" class="font-semibold cursor-pointer text-surface-900 dark:text-surface-0 hover:text-primary transition-colors duration-300">Login</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-end">
+                            <p-button (onClick)="activateCallback(2)" [disabled]="!isStep1Valid() || (isLoading$ | async)">
+                                <span *ngIf="isLoading$ | async; else next" class="animate-spin border-2 border-t-transparent border-white rounded-full w-4 h-4 mr-2"></span>
+                                <ng-template #next>
+                                    <i class="pi pi-arrow-right mr-2"></i>
+                                </ng-template>
+                                {{ (isLoading$ | async) ? 'Loading...' : 'Next' }}
+                            </p-button>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="2">
+                    <ng-template #content>
+                        <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 48rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Porfile details</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="">
+                                    <label for="firstName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">First Name</label>
+                                    <input pInputText id="firstName" type="text" placeholder="First Name" class="w-full mb-1" formControlName="firstName" [ngClass]="{ 'p-invalid': f['firstName'].touched && f['firstName'].errors }" />
+                                    <small *ngIf="f['firstName'].errors?.['required'] && f['firstName'].touched" class="p-error">First name is required</small>
+                                </div>
+                                <div class="">
+                                    <label for="lastName" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Last Name</label>
+                                    <input pInputText id="lastName" type="text" placeholder="Last Name" class="w-full mb-1" formControlName="lastName" [ngClass]="{ 'p-invalid': f['lastName'].touched && f['lastName'].errors }" />
+                                    <small *ngIf="f['lastName'].errors?.['required'] && f['lastName'].touched" class="p-error">Last name is required</small>
+                                </div>
+
+                                <div class="">
+                                    <label for="birthdate" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Birth Date</label>
+
+                                    <p-datepicker id="birthdate" formControlName="birthdate" placeholder="yyyy-mm-dd" [iconDisplay]="'input'" [showIcon]="true" dateFormat="yy-mm-dd" inputId="icondisplay" fluid> </p-datepicker>
+                                    <small *ngIf="f['birthdate'].errors?.['required'] && f['birthdate'].touched" class="p-error">Birthdate is required</small>
+                                </div>
+                                <div class="">
+                                    <label for="gender" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Gender</label>
+
+                                    <div id="gender" class="flex flex-wrap gap-3 mt-2">
+                                        <div class="flex items-center" *ngFor="let btn of genders">
+                                            <p-radioButton [id]="btn.label" [name]="'gender'" [value]="btn.value" formControlName="gender" />
+                                            <label [for]="btn.label" class="ml-2">{{ btn.label }}</label>
+                                        </div>
+                                    </div>
+
+                                    <small *ngIf="f['gender'].errors?.['required'] && f['gender'].touched" class="p-error">Gender is required</small>
+                                </div>
+                                <div class="">
+                                    <label for="country" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Country</label>
+                                    <p-select id="country" [options]="countries" formControlName="country" optionLabel="name" optionValue="code" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country" class="w-full">
+                                        <ng-template #selectedItem let-selectedOption>
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [alt]="'flag'" [class]="'flag flag-' + selectedOption?.code.toLowerCase()" style="width: 18px" />
+                                                <div>{{ selectedOption.name }}</div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template let-country #item>
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [alt]="'flag'" [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                                                <div>{{ country.name }}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-select>
+                                    <small *ngIf="f['country'].errors?.['required'] && f['country'].touched" class="p-error">Country is required</small>
+                                </div>
+                                <div class="">
+                                    <label for="language" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Language</label>
+
+                                    <p-select id="language" [options]="languages" formControlName="language" optionLabel="name" optionValue="value" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a language" class="w-full">
+                                        <ng-template #selectedItem let-selectedOption>
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [alt]="'flag'" [class]="'flag flag-' + selectedOption?.code.toLowerCase()" style="width: 18px" />
+                                                <div>{{ selectedOption.name }}</div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template let-language #item>
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [alt]="'flag'" [class]="'flag flag-' + language.code.toLowerCase()" style="width: 18px" />
+                                                <div>{{ language.name }}</div>
+                                            </div>
+                                        </ng-template>
+                                    </p-select>
+                                    <small *ngIf="f['language'].errors?.['required'] && f['language'].touched" class="p-error">Language is required</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-between">
+                            <p-button (onClick)="activateCallback(1)" label="Back" severity="secondary" icon="pi pi-arrow-left" [disabled]="isLoading$ | async" />
+
+                            <p-button (onClick)="submit()" [disabled]="!isStep2Valid() || (isLoading$ | async)">
+                                <span *ngIf="isLoading$ | async; else next" class="animate-spin border-2 border-t-transparent border-white rounded-full w-4 h-4 mr-2"></span>
+                                <ng-template #next>
+                                    <i class="pi pi pi-check mr-2"></i>
+                                </ng-template>
+                                {{ (isLoading$ | async) ? 'Loading...' : 'Submit' }}
+                            </p-button>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+
+                <p-step-panel [value]="3">
+                    <ng-template #content>
+                        <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 48rem">
+                            <div class="text-center mt-4 mb-4 text-xl font-semibold">Account created successfully</div>
+                            <div class="flex justify-center">
+                                <img alt="logo" src="https://primefaces.org/cdn/primeng/images/stepper/content.svg" />
+                            </div>
+                        </div>
+                        <div class="flex pt-6 justify-center">
+                            <p-button label="Go to Login" icon="pi pi-sign-in" (onClick)="router.navigate(['/auth/login'])"></p-button>
+                        </div>
+                    </ng-template>
+                </p-step-panel>
+            </p-step-panels>
+        </p-stepper>
+    </div>
+</form>
+
+<p-dialog header="Header" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <p class="mb-8">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+        irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p class="mb-8">
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam
+        voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia
+        non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel
+        eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+    </p>
+    <p class="mb-8">
+        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia
+        deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus,
+        omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a
+        sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+    </p>
+    <p class="mb-8">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+        irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <p class="mb-8">
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam
+        voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia
+        non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel
+        eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+    </p>
+    <p>
+        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia
+        deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus,
+        omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a
+        sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+    </p>
+</p-dialog>

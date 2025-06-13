@@ -1,0 +1,49 @@
+<form [formGroup]="loginForm" (ngSubmit)="submit()">
+    <div class="text-center mb-8 flex flex-col items-center">
+        <div class="w-32">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M18.1579 8.60503C20.614 10.1139 20.614 13.8861 18.1579 15.395L11.5263 19.4689C9.07017 20.9778 6 19.0917 6 16.074L6 7.92602C6 4.90827 9.07018 3.02218 11.5263 4.53105L18.1579 8.60503Z"
+                    stroke="var(--primary-color)"
+                    stroke-width="3"
+                />
+                <path d="M11.5263 19.4689C9.07017 20.9778 6 19.0917 6 16.074L6 7.92602C6 4.90827 9.07018 3.02218 11.5263 4.53105L18.1579 8.60503" stroke="#363853" stroke-width="3" stroke-linecap="round" />
+            </svg>
+        </div>
+        <div class="text-surface-700 dark:text-surface-200 text-6xl font-medium mb-4"><span class="text-primary">Vi</span>dara</div>
+        <span class="text-muted-color font-medium">Sign in to continue</span>
+    </div>
+
+    <div class="flex flex-col mb-8">
+        <label for="email" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
+        <p-iconfield class="w-full">
+            <p-inputicon class="pi pi-envelope"></p-inputicon>
+
+            <input pInputText [pAutoFocus]="true" id="email" type="text" placeholder="Email address" class="w-full md:w-[30rem] mb-1" formControlName="email" [ngClass]="{ 'p-invalid': f['email'].touched && f['email'].errors }" />
+        </p-iconfield>
+        <small *ngIf="f['email'].errors?.['required'] && f['email'].touched" class="p-error">Email is required</small>
+    </div>
+
+    <div class="flex flex-col mb-4">
+        <label for="password" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Password</label>
+
+        <p-iconfield class="w-full">
+            <p-inputicon class="pi pi-lock z-20"></p-inputicon>
+            <p-password id="password" formControlName="password" class="mb-2" placeholder="Password" [toggleMask]="true" [fluid]="true" [feedback]="false" [ngClass]="{ 'p-invalid': f['password'].touched && f['password'].errors }"></p-password>
+        </p-iconfield>
+    </div>
+
+    <div class="flex items-center justify-between mt-2 mb-8 gap-8">
+        <div class="flex items-center">
+            <p-checkbox formControlName="staySignedIn" id="staySignedIn" binary class="mr-2"></p-checkbox>
+            <label for="staySignedIn">Stay signed in</label>
+        </div>
+        <a routerLink="/auth/forgot-password" class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</a>
+    </div>
+    <p-button label="Sign In" type="submit" styleClass="w-full mb-6"></p-button>
+
+    <span class="font-medium text-surface-600 dark:text-surface-200">
+        Dont have an account?
+        <a routerLink="/auth/register" class="font-semibold cursor-pointer text-surface-900 dark:text-surface-0 hover:text-primary transition-colors duration-300">Register</a>
+    </span>
+</form>

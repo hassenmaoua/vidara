@@ -1,8 +1,9 @@
 package edu.esprit.content.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import edu.esprit.content.client.UserClient;
 import edu.esprit.content.dto.ContentDTO;
 import edu.esprit.content.dto.requests.ContentRequest;
+import edu.esprit.content.dto.user.UserDTO;
 import edu.esprit.content.entity.Content;
 import edu.esprit.content.enumeration.AccessLevel;
 import edu.esprit.content.enumeration.ContentType;
@@ -13,6 +14,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -32,6 +41,7 @@ import java.util.List;
 public class ContentController {
     private final ContentService contentService;
     private final StorageService storageService;
+    private final UserClient userClient;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create new content with optional file")
@@ -44,8 +54,10 @@ public class ContentController {
 
         try {
 
+            long userId = 2L; // TODO: fetch user id from authentifcation context later when it is implemented
+
             ContentRequest contentRequest = ContentRequest.builder()
-                    .creatorId(0L)
+                    .creatorId(userId)
                     .accessLevel(accessLevel)
                     .title(title)
                     .description(description)
@@ -77,24 +89,56 @@ public class ContentController {
         }
     }
 
+    @GetMapping("")
+    @Operation(summary = "Get content by a list of creator IDs with filters and pagination")
+    public ResponseEntity<Page<ContentDTO>> loadContent(
+            @RequestParam List<Long> creatorIds,
+            @RequestParam(required = false) AccessLevel accessLevel,
+            @RequestParam(required = false) ContentType contentType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Content> contentPage = contentService.getContentByFilters(creatorIds, accessLevel, contentType, pageable);
+
+
+        List<UserDTO> creators = userClient.getUsersByIds(creatorIds);
+
+        if (creators == null) {
+            creators = Collections.emptyList();
+        }
+
+        if (creators.isEmpty()) {
+            log.warn("No creators found for the given ids: {}", creatorIds);
+        }
+
+        // Map creators by their ID for fast lookup
+        Map<Long, UserDTO> creatorMap = creators.stream()
+                .collect(Collectors.toMap(UserDTO::getId, Function.identity()));
+
+        // Map content to DTO with creator info
+        Page<ContentDTO> dtoPage = contentPage.map(content -> {
+            UserDTO creator = creatorMap.get(content.getCreatorId());
+            return ContentMapper.toDto(content, creator); // pass null if creator not found
+        });
+
+        return ResponseEntity.ok(dtoPage);
+    }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get content by ID")
     public ResponseEntity<ContentDTO> getContent(@PathVariable Long id) {
-        var content = contentService.getContentById(id);
-        return ResponseEntity.ok(ContentMapper.toDto(content));
-    }
-
-    @GetMapping
-    @Operation(summary = "Get all content")
-    public ResponseEntity<List<Content>> getAllContent() {
-        return ResponseEntity.ok(contentService.getAllContent());
+        Content content = contentService.getContentById(id);
+        UserDTO user = userClient.getUserById(content.getCreatorId());
+        return ResponseEntity.ok(ContentMapper.toDto(content, user));
     }
 
     @GetMapping("/creator/{creatorId}")
     @Operation(summary = "Get content by creator ID")
-    public ResponseEntity<List<Content>> getContentByCreator(@PathVariable Long creatorId) {
-        return ResponseEntity.ok(contentService.getContentByCreator(creatorId));
+    public ResponseEntity<List<ContentDTO>> getContentByCreator(@PathVariable Long creatorId) {
+        List<Content> contentByCreator = contentService.getContentByCreator(creatorId);
+        UserDTO creator = userClient.getUserById(creatorId);
+        return ResponseEntity.ok(contentByCreator.stream().map(content -> ContentMapper.toDto(content, creator)).toList());
     }
 
     @PutMapping("/{id}")

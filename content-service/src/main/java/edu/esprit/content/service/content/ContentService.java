@@ -2,12 +2,19 @@ package edu.esprit.content.service.content;
 
 import edu.esprit.content.dto.requests.ContentRequest;
 import edu.esprit.content.entity.Content;
+import edu.esprit.content.enumeration.AccessLevel;
+import edu.esprit.content.enumeration.ContentType;
 import edu.esprit.content.exception.ContentNotFoundException;
 import edu.esprit.content.repository.ContentRepository;
 import edu.esprit.content.utils.ContentMapper;
+import edu.esprit.content.utils.ContentSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -15,6 +22,16 @@ import java.util.List;
 @AllArgsConstructor
 public class ContentService implements IContentService {
     private final ContentRepository contentRepository;
+
+    @Override
+    public Page<Content> getContentByFilters(List<Long> creatorIds, AccessLevel accessLevel, ContentType contentType, Pageable pageable)  {
+        Specification<Content> spec = Specification
+                .where(ContentSpecifications.hasCreatorIds(creatorIds))
+                .and(ContentSpecifications.hasAccessLevel(accessLevel))
+                .and(ContentSpecifications.hasType(contentType));
+
+        return contentRepository.findAll(spec, pageable);
+    }
 
     @Override
     public Content createContent(Content content) {
