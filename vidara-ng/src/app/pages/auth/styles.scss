@@ -1,0 +1,20 @@
+::ng-deep .p-password input {
+    padding-left: 2.5rem !important;
+}
+
+.custom-otp-input {
+    width: 40px;
+    font-size: 36px;
+    border: 0 none;
+    appearance: none;
+    text-align: center;
+    transition: all 0.2s;
+    background: transparent;
+    border-bottom: 2px solid var(--p-inputtext-border-color);
+    border-radius: 0px;
+}
+
+.custom-otp-input:focus {
+    outline: 0 none;
+    border-bottom-color: var(--p-primary-color);
+}

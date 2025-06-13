@@ -1,64 +1,110 @@
-<p-panel [toggleable]="false" class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg shadow">
+<p-panel [toggleable]="false" class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg shadow" *ngIf="content; else loadingState">
+    <!-- HEADER -->
     <ng-template #header>
         <div class="flex items-center gap-3">
-            <p-avatar *ngIf="content?.author?.avatar" [image]="content?.author?.avatar" size="large" shape="circle"></p-avatar>
-            <p-avatar *ngIf="!content?.author?.avatar" [label]="content?.author?.name[0]" size="large" shape="circle"></p-avatar>
-
-            <div class="flex flex-col">
-                <span class="text-xl font-bold text-base">{{ content?.author?.name }}</span>
-                <span class="text-base text-gray-500 dark:text-gray-400">{{ content?.author?.email }}</span>
-            </div>
+            <ng-container *ngTemplateOutlet="userAvatar; context: { $implicit: content.creator }"></ng-container>
         </div>
     </ng-template>
 
+    <!-- ACTION ICONS -->
     <ng-template #icons>
-        <span class="text-gray-500 dark:text-gray-400">{{ content?.updatedAt }}</span>
+        <span class="text-gray-500 dark:text-gray-400">{{ content.updatedAt | formatDate }}</span>
+        <i class="ms-4 pi pi-ellipsis-v"></i>
     </ng-template>
 
-    <div class="mt-2 text-base whitespace-pre-wrap">{{ displayDescription }}</div>
-    <div *ngIf="content?.description?.length > 200" class="mt-1">
+    <!-- MEDIA CONTENT -->
+    <div class="mt-4 relative">
+        <ng-container *ngIf="hasImages || hasVideo">
+            <img *ngIf="hasImages" [src]="content.storageUrl | storageUrl" alt="img" class="w-full max-h-100 object-cover rounded" [ngClass]="{ 'blur-lg pointer-events-none select-none': isPayPerView }" />
+
+            <video *ngIf="hasVideo" controls [title]="content.title" class="w-full aspect-video rounded" [ngClass]="{ 'blur-md pointer-events-none select-none': isPayPerView }">
+                <source [src]="content.storageUrl | storageUrl | safeUrl" type="video/mp4" />
+                <track label="English" kind="captions" srclang="en" [attr.src]="null" default />
+            </video>
+
+            <!-- Paywall Overlay -->
+            <div *ngIf="isPayPerView" class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center rounded">
+                <p-button [severity]="'primary'" size="large">
+                    {{ content.price | currency }}
+                </p-button>
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- TITLE & DESCRIPTION -->
+    <h3>{{ content.title }}</h3>
+
+    <div class="mt-2 text-base break-words" [innerHTML]="displayDescription"></div>
+
+    <div *ngIf="content.description.length > 200" class="mt-1">
         <button (click)="toggleDescription()" class="text-blue-500 hover:underline text-xs">
             {{ showFullDescription ? 'Show less' : 'Show more' }}
         </button>
     </div>
 
-    <div class="mt-4">
-        <ng-container *ngIf="hasImages">
-            <div *ngIf="isSingleImage">
-                <p-image [src]="content.images[0]" [preview]="false" alt="Content image" styleClass="w-full max-h-96"></p-image>
-            </div>
-            <div *ngIf="isMultipleImages">
-                <p-galleria
-                    [value]="galleriaImages"
-                    [showItemNavigators]="true"
-                    [showThumbnails]="false"
-                    [showIndicators]="true"
-                    [showItemNavigatorsOnHover]="true"
-                    [circular]="true"
-                    [responsiveOptions]="galleriaResponsiveOptions"
-                    [containerStyle]="{ width: '100%' }"
-                >
-                    <ng-template let-item pTemplate="item">
-                        <img [src]="item.itemImageSrc" class="w-full" />
-                    </ng-template>
-                    <ng-template #thumbnail let-item>
-                        <img [src]="item.thumbnailImageSrc" style="display: block" />
-                    </ng-template>
-                </p-galleria>
-            </div>
-        </ng-container>
-    </div>
-    <div *ngIf="hasVideo" class="mt-4">
-        <iframe [src]="content.videoUrl | safeUrl" frameborder="0" allowfullscreen class="w-full aspect-video rounded"></iframe>
-    </div>
-
+    <!-- FOOTER -->
     <ng-template #footer>
         <div class="flex items-center justify-between pt-2 border-t mt-2 dark:border-gray-700">
             <div class="flex items-center gap-2">
-                <p-button icon="pi pi-heart" label="12 likes" rounded text class="text-red-500"></p-button>
-                <p-button icon="pi pi-comment" label="136 comments" severity="secondary" text></p-button>
+                <p-button icon="pi pi-heart" label="0 likes" rounded text class="text-red-500"></p-button>
+                <p-button icon="pi pi-comment" label="0 comments" severity="secondary" text></p-button>
             </div>
             <p-button icon="pi pi-bookmark" severity="secondary" rounded text></p-button>
         </div>
     </ng-template>
 </p-panel>
+
+<!-- LOADING PLACEHOLDER -->
+<ng-template #loadingState>
+    <p-panel [toggleable]="false" class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg opacity-50">
+        <ng-template #header>
+            <div class="flex items-center gap-3 mb-5">
+                <p-skeleton shape="circle" size="3rem" styleClass="mr-2" />
+                <div class="flex flex-col">
+                    <p-skeleton width="10rem" styleClass="mb-2" />
+                    <p-skeleton height=".5rem" />
+                </div>
+            </div>
+        </ng-template>
+
+        <p-skeleton width="100%" height="15rem" styleClass="mb-6" />
+        <p-skeleton width="40rem" height="1.5rem" styleClass="mb-2" />
+
+        <ng-template #footer>
+            <div class="flex justify-between mt-4">
+                <p-skeleton width="4rem" height="2rem" />
+                <p-skeleton width="4rem" height="2rem" />
+            </div>
+        </ng-template>
+    </p-panel>
+</ng-template>
+
+<ng-template #userAvatar let-user>
+    <div class="flex items-center gap-3">
+        <!-- Avatar or skeleton -->
+        <ng-container *ngIf="user; else loading">
+            <p-avatar *ngIf="user.avatar; else initial" [image]="user.avatar | storageUrl" size="large" shape="circle"> </p-avatar>
+            <ng-template #initial>
+                <p-avatar [label]="user.fullName?.charAt(0) || '?'" size="large" shape="circle"> </p-avatar>
+            </ng-template>
+
+            <div class="flex flex-col">
+                <a [routerLink]="['/', user.username]" class="text-xl font-bold text-base">
+                    {{ user.fullName || 'Unknown User' }}
+                </a>
+                <span class="text-base text-gray-500 dark:text-gray-400">
+                    {{ user.email || '-' }}
+                </span>
+            </div>
+        </ng-container>
+
+        <!-- Skeleton state -->
+        <ng-template #loading>
+            <p-skeleton shape="circle" size="3rem" styleClass="mr-2" />
+            <div class="flex flex-col">
+                <p-skeleton width="10rem" styleClass="mb-2" />
+                <p-skeleton height=".5rem" />
+            </div>
+        </ng-template>
+    </div>
+</ng-template>

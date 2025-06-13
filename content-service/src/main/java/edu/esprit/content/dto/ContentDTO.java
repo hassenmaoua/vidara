@@ -1,9 +1,9 @@
 package edu.esprit.content.dto;
 
 
+import edu.esprit.content.dto.user.UserDTO;
 import edu.esprit.content.enumeration.AccessLevel;
 import edu.esprit.content.enumeration.ContentType;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +28,6 @@ public class ContentDTO {
     private boolean isActive = true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private UserDTO creator;
 }

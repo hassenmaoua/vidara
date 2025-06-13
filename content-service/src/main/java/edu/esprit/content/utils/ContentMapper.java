@@ -2,6 +2,7 @@ package edu.esprit.content.utils;
 
 import edu.esprit.content.dto.ContentDTO;
 import edu.esprit.content.dto.requests.ContentRequest;
+import edu.esprit.content.dto.user.UserDTO;
 import edu.esprit.content.entity.Content;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,23 @@ public class ContentMapper {
                 .updatedAt(content.getUpdatedAt())
                 .isActive(content.isActive())
                 .storageUrl(content.getStorageUrl())
+                .build();
+    }
+
+    public static ContentDTO toDto(Content content, UserDTO user) {
+        return ContentDTO.builder()
+                .id(content.getId())
+                .creatorId(content.getCreatorId())
+                .storageUrl(content.getStorageUrl())
+                .contentType(content.getContentType())
+                .accessLevel(content.getAccessLevel())
+                .price(content.getPrice())
+                .title(content.getTitle())
+                .description(content.getDescription())
+                .isActive(content.isActive())
+                .createdAt(content.getCreatedAt())
+                .updatedAt(content.getUpdatedAt())
+                .creator(user)
                 .build();
     }
 

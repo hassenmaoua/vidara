@@ -1,5 +1,6 @@
 import { Injectable, effect, signal, computed } from '@angular/core';
 import { Subject } from 'rxjs';
+import { AuthService } from '../../pages/auth/auth.service';
 
 export interface layoutConfig {
     preset?: string;
@@ -78,7 +79,7 @@ export class LayoutService {
 
     private initialized = false;
 
-    constructor() {
+    constructor(private readonly authService: AuthService) {
         effect(() => {
             const config = this.layoutConfig();
             if (config) {
@@ -90,6 +91,13 @@ export class LayoutService {
             const config = this.layoutConfig();
 
             if (!this.initialized || !config) {
+                const rawConfig = localStorage.getItem(authService.currentUser?.username + '-config');
+                const config: layoutConfig = rawConfig ? (JSON.parse(rawConfig) as layoutConfig) : this.layoutConfig();
+
+                if (config) {
+                    this.layoutConfig.update((state) => ({ ...state, ...config }));
+                }
+
                 this.initialized = true;
                 return;
             }
@@ -121,6 +129,7 @@ export class LayoutService {
 
     toggleDarkMode(config?: layoutConfig): void {
         const _config = config || this.layoutConfig();
+        localStorage.setItem(this.authService.currentUser?.username + '-config', JSON.stringify(config));
         if (_config.darkTheme) {
             document.documentElement.classList.add('app-dark');
         } else {

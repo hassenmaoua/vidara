@@ -12,25 +12,34 @@ import { ButtonModule } from 'primeng/button';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { PopoverModule } from 'primeng/popover';
+import { AuthService } from '../../pages/auth/auth.service';
+import { UserDTO } from '../../models/userDTO.model';
+import { StorageUrlPipe } from '../../pipes/storage-url.pipe';
 
 @Component({
     selector: 'app-profile',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MenuModule, BadgeModule, RippleModule, AvatarModule, DialogModule, PasswordModule, FloatLabelModule, ReactiveFormsModule, ButtonModule, PopoverModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MenuModule, BadgeModule, RippleModule, AvatarModule, DialogModule, PasswordModule, FloatLabelModule, ReactiveFormsModule, ButtonModule, PopoverModule, StorageUrlPipe],
     template: `
         <button class="layout-topbar-action layout-topbar-action-highlight" (click)="toggleMenu($event)">
-            <i class="pi pi-user"></i>
+            <img *ngIf="user?.avatar; else icon" [src]="user?.avatar | storageUrl" alt="img" class="rounded-full" styleClass="-m-2" />
+            <ng-template #icon>
+                <i class="pi pi-user"></i>
+            </ng-template>
+
             <span>Profile</span>
         </button>
 
         <p-menu #menu [model]="items" [popup]="true" styleClass="w-full md:w-60">
             <ng-template #start>
                 <div pRipple class="flex flex-column items-center justify-start p-2 pt-4">
-                    <p-avatar [label]="(user?.firstName?.slice(0, 1) || 'A').toUpperCase()" styleClass="mr-2" shape="circle" />
-
+                    <p-avatar *ngIf="user?.avatar; else initial" [image]="user?.avatar | storageUrl" styleClass="mr-2" shape="circle"> </p-avatar>
+                    <ng-template #initial>
+                        <p-avatar [label]="user?.fullName?.charAt(0) || '?'" styleClass="mr-2" shape="circle"> </p-avatar>
+                    </ng-template>
                     <span class="inline-flex flex-col">
-                        <span class="font-bold">{{ user?.firstName }}</span>
-                        <span class="text-sm">{{ user?.email }}</span>
+                        <span class="font-bold">{{ user?.fullName }}</span>
+                        <span class="text-sm">{{ user?.username }}</span>
                     </span>
                 </div>
             </ng-template>
@@ -98,14 +107,17 @@ export class AppProfile implements OnInit, AfterViewInit, OnDestroy {
     passwordVisible: boolean = false;
     settingsVisible: boolean = false;
     name!: string;
-    user: any | undefined;
+    user: UserDTO | undefined;
 
     genderOptions = [
         { label: 'Male', value: 'MALE' },
         { label: 'Female', value: 'FEMALE' }
     ];
 
-    constructor(private readonly renderer: Renderer2) {
+    constructor(
+        private readonly renderer: Renderer2,
+        private readonly authService: AuthService
+    ) {
         this.isLoadingSubject = new BehaviorSubject<boolean>(false);
         this.isLoading$ = this.isLoadingSubject.asObservable();
     }
@@ -146,7 +158,7 @@ export class AppProfile implements OnInit, AfterViewInit, OnDestroy {
                         icon: 'pi pi-sign-out',
                         styleClass: 'text-red-500',
                         command: () => {
-                            // this.authService.logout();
+                            this.authService.logout();
                         }
                     }
                 ]
@@ -159,8 +171,7 @@ export class AppProfile implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        // this.user = this.authService.currentUser;
-        this.user = { email: 'demo@email.com', firstName: 'demo', lastName: 'demo' };
+        this.user = this.authService.currentUser;
     }
 
     initForm() {

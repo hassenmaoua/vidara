@@ -1,4 +1,70 @@
-<div class="card">
-    <div class="font-semibold text-xl mb-4">Profile Page</div>
-    <p>Use this page to start from scratch and place your custom content.</p>
+<div *ngIf="loading" class="flex justify-center items-center h-64">
+    <p-skeleton width="100%" height="15rem" />
 </div>
+
+<ng-container *ngIf="!loading && user">
+    <div class="card">
+        <!-- Cover picture -->
+        <div class="relative h-60 overflow-hidden rounded-t-lg -m-8">
+            <img [src]="user.cover | storageUrl" alt="img" class="w-full h-full object-cover absolute top-0 left-0" />
+        </div>
+
+        <!-- Profile Header -->
+        <div class="relative">
+            <div class="flex items-start">
+                <!-- Avatar -->
+                <img *ngIf="user.avatar; else initial" [src]="user.avatar | storageUrl" alt="avatar" class="rounded-full w-48 h-48 border-4 border-white dark:border-gray-800 object-cover -mt-24" />
+                <ng-template #initial>
+                    <p-avatar [label]="user.fullName?.charAt(0) || '?'" [style]="{ width: '12rem', height: '12rem', fontSize: '4rem' }" styleClass="border-4 border-white dark:border-gray-800 object-cover -mt-24" shape="circle"> </p-avatar>
+                </ng-template>
+
+                <!-- Action buttons -->
+                <div class="ml-auto flex gap-2">
+                    <!-- <button class="btn btn-primary">Edit</button> -->
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="ml-4 mt-4 flex-1">
+                <h2 class="font-bold truncate mb-0">{{ user.fullName }}</h2>
+                <div class="flex gap-2">
+                    <span class="text-gray-500">{{ '@' + user.username }}</span>
+                    -
+                    <span class="text-gray-400">Last login: N/A</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bio -->
+        <div *ngIf="user.bio" class="mt-4 px-4 text-gray-700 dark:text-gray-300 whitespace-pre-line">
+            {{ user.bio || 'No bio available.' }}
+        </div>
+    </div>
+    <!-- Subscription Section -->
+    <div class="card">
+        <div class="-m-5 px-4">
+            <h3 class="text-primary">Subscription</h3>
+
+            <p-button size="large" severity="primary" outlined class="flex space-between justify-between" [fluid]="true">
+                <span>Subscribed</span>
+                <span>for free</span>
+            </p-button>
+        </div>
+    </div>
+    <!-- Navigation Panel -->
+    <!-- <div class="mt-4 px-4 border-t-4">
+        <ul class="flex space-x-4 overflow-x-auto border-b">
+            <li>
+                <a [routerLink]="['/', username]" class="pb-2 border-b-2 border-current">0 Posts</a>
+            </li>
+            <li>
+                <a [routerLink]="['/', username, 'videos']" class="pb-2">0 Videos</a>
+            </li>
+            <li>
+                <a [routerLink]="['/', username, 'images']" class="pb-2">0 Images</a>
+            </li>
+        </ul>
+    </div> -->
+
+    <app-content-list [followedCreatorIds]="[user.id]"></app-content-list>
+</ng-container>
