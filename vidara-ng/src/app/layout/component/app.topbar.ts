@@ -6,11 +6,12 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
 import { LayoutService } from '../service/layout.service';
 import { AppProfile } from './app.profile';
+import { AppLanguage } from './app.language';
 
 @Component({
     selector: 'app-topbar',
     standalone: true,
-    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, AppProfile],
+    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, AppProfile, AppLanguage],
     template: ` <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
@@ -49,6 +50,14 @@ import { AppProfile } from './app.profile';
                     </button>
                     <app-configurator />
                 </div>
+            </div>
+
+            <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
+                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png" [alt]="'flag'" [class]="'flag flag-en'" style="width: 18px" />
+            </button>
+
+            <div class="layout-topbar-menu hidden lg:block">
+                <app-language></app-language>
             </div>
 
             <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">

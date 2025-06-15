@@ -9,10 +9,11 @@ import { StorageUrlPipe } from '../../pipes/storage-url.pipe';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { ContentListComponent } from '../content/content-list/content-list.component';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 @Component({
     selector: 'app-profile',
-    imports: [CommonModule, RouterModule, SkeletonModule, StorageUrlPipe, AvatarModule, ButtonModule, ContentListComponent],
+    imports: [CommonModule, RouterModule, SkeletonModule, StorageUrlPipe, AvatarModule, ButtonModule, ContentListComponent, TimeAgoPipe],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.scss'
 })

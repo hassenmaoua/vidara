@@ -7,6 +7,7 @@ import edu.esprit.authentication.service.user.UserService;
 import edu.esprit.authentication.utilis.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,24 +64,6 @@ public class UserController {
     public ResponseEntity<UserDTO> updatePassword(@RequestParam Long userId, @RequestParam String oldPassword, @RequestParam String newPassword) {
         var user = userService.changePassword(userId, oldPassword, newPassword);
         return ResponseEntity.ok(UserMapper.toUserDTO(user));
-    }
-
-    @Operation(
-            operationId = "emailExists",
-            summary = "User email exists",
-            description = "User exists by email or not.")
-    @GetMapping("/email-exists")
-    public ResponseEntity<Boolean> emailExists(@RequestParam String email) {
-        return ResponseEntity.ok(userService.emailExists(email));
-    }
-
-    @Operation(
-            operationId = "usernameExists",
-            summary = "Username exists",
-            description = "User exists by username or not.")
-    @GetMapping("/username-exists")
-    public ResponseEntity<Boolean> usernameExists(@RequestParam String username) {
-        return ResponseEntity.ok(userService.usernameExists(username));
     }
 
     @Operation(

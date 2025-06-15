@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/content/files")
+@RequestMapping("/public/files")
 @RequiredArgsConstructor
 @Tag(name = "File Storage", description = "API for file upload/download")
 public class FileStorageController {

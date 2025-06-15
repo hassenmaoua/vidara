@@ -112,7 +112,7 @@
 </p-dialog>
 
 <ng-template #initial>
-    <p-avatar class="flex-none mr-2" [label]="user?.fullName?.charAt(0) || '?'" size="xlarge" shape="circle"> </p-avatar>
+    <p-avatar class="flex-none mr-2" [label]="user?.fullName?.toLocaleUpperCase()?.charAt(0) || '?'" size="xlarge" shape="circle"> </p-avatar>
 </ng-template>
 
 <p-toast />

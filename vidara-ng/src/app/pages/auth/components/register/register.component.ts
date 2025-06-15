@@ -111,7 +111,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
             // Step 2 fields
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
-            birthdate: [null, Validators.required],
+            birthDate: [null, Validators.required],
             gender: ['', Validators.required],
             country: ['', Validators.required],
             language: ['EN', Validators.required]
@@ -160,7 +160,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         return (
             (this.registerForm.get('firstName')?.valid &&
                 this.registerForm.get('lastName')?.valid &&
-                this.registerForm.get('birthdate')?.valid &&
+                this.registerForm.get('birthDate')?.valid &&
                 this.registerForm.get('gender')?.valid &&
                 this.registerForm.get('country')?.valid &&
                 this.registerForm.get('language')?.valid) ||

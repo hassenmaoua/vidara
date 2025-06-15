@@ -5,6 +5,7 @@ import edu.esprit.authentication.entity.User;
 import edu.esprit.authentication.service.auth.AuthService;
 import edu.esprit.authentication.service.user.UserService;
 import edu.esprit.authentication.utilis.UserMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,24 @@ public class AuthController {
 
         // Return the response received from the external API
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDTO);
+    }
+
+    @Operation(
+            operationId = "emailExists",
+            summary = "User email exists",
+            description = "User exists by email or not.")
+    @GetMapping("/email-exists")
+    public ResponseEntity<Boolean> emailExists(@RequestParam String email) {
+        return ResponseEntity.ok(userService.emailExists(email));
+    }
+
+    @Operation(
+            operationId = "usernameExists",
+            summary = "Username exists",
+            description = "User exists by username or not.")
+    @GetMapping("/username-exists")
+    public ResponseEntity<Boolean> usernameExists(@RequestParam String username) {
+        return ResponseEntity.ok(userService.usernameExists(username));
     }
 
 }

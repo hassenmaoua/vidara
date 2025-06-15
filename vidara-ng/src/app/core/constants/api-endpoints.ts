@@ -1,14 +1,16 @@
 export const authWS = {
-    login: '/auth-service/auth/login',
-    register: '/auth-service/auth/register',
-    verifyToken: '/auth-service/auth/verify_token',
-    getByUsername: '/auth-service/users/{username}',
-    emailExists: '/auth-service/users/email-exists',
-    usernameExists: '/auth-service/users/username-exists'
+    login: '/api-gateway/auth/login',
+    register: '/api-gateway/auth/register',
+    verifyToken: '/api-gateway/auth/verify_token',
+    emailExists: '/api-gateway/auth/email-exists',
+    usernameExists: '/api-gateway/auth/username-exists',
+    getByUsername: '/api-gateway/users/{username}',
+    updateProfile: '/api-gateway/users/update-profile',
+    changePassword: '/api-gateway/users/change-password'
 };
 
 export const contentWS = {
-    loadContent: '/content-service/contents',
-    createContentWithFile: '/content-service/contents',
-    STORAGE_URL: '/content-service/content/files/{0}'
+    loadContent: '/api-gateway/contents',
+    createContentWithFile: '/api-gateway/contents',
+    STORAGE_URL: '/api-gateway/public/files/{0}'
 };

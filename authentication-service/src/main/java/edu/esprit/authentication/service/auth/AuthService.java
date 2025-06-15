@@ -14,7 +14,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 
 @Service
@@ -31,44 +35,46 @@ public class AuthService implements IAuthService {
         return userService.add(UserMapper.toUser(request));
     }
 
+
+
     @Override
     public LoginResponse authenticate(LoginRequest request) {
-//        Authentication auth = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        request.getEmail(),
-//                        request.getPassword()
-//                )
-//        );
-//
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
         var claims = new HashMap<String, Object>();
-//        User user = (User) auth.getPrincipal();
-        User user = (User) userService.get("ADMIN");
+        User user = (User) auth.getPrincipal();
+
         claims.put("fullName", user.getFullName());
+        claims.put("email", user.getEmail());
+        claims.put("roles", Collections.emptyList());
 
         var authToken = jwtService.generateToken(claims, user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-
 
         return LoginResponse.builder()
                 .authToken(authToken)
-                .refreshToken(refreshToken)
                 .build();
     }
 
-
+    @Transactional
     @Override
     public User getUserByToken(String jwt) {
         // Extract the user email from the token
-//        String userEmail = jwtService.extractUsername(jwt);
-        String userEmail = "ADMIN";
+        String username = jwtService.extractUsername(jwt);
 
         // Retrieve the user from the repository using the email
-        User user = userRepository.findByUsername(userEmail).orElse(null);
+        User user = userRepository.findByUsername(username).orElse(null);
 
         // Return null if the user doesn't exist or the token is not valid for the user
-//        if (user == null || !jwtService.isTokenValid(jwt, user)) {
-//            return null;
-//        }
+        if (user == null || !jwtService.isTokenValid(jwt, user)) {
+            return null;
+        }
+
+        user.setLastLogin(LocalDateTime.now());
 
         return user;
     }
