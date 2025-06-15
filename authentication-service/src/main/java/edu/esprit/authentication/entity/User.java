@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Collection;
 import java.util.List;
@@ -80,6 +81,9 @@ public class User implements UserDetails, Principal {
 
     @Column(name = "enabled")
     boolean enabled;
+
+    @Column(name = "lastlogin")
+    LocalDateTime lastLogin;
 
 
     @Override

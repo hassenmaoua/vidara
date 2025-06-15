@@ -12,10 +12,10 @@ import java.util.List;
 @FeignClient(name = "authentication-service") // matches Eureka app name
 public interface UserClient {
 
-    @GetMapping("/api/v1/users/load/{id}")
+    @GetMapping("/users/load/{id}")
     UserDTO getUserById(@PathVariable("id") Long id);
 
-    @PostMapping("/api/v1/users/batch")
+    @PostMapping("/users/batch")
     List<UserDTO> getUsersByIds(@RequestBody List<Long> ids);
 }
 

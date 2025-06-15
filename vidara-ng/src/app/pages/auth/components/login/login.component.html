@@ -40,7 +40,10 @@
         </div>
         <a routerLink="/auth/forgot-password" class="font-medium no-underline ml-2 text-right cursor-pointer text-primary">Forgot password?</a>
     </div>
-    <p-button label="Sign In" type="submit" styleClass="w-full mb-6"></p-button>
+    <p-button type="submit" styleClass="w-full mb-6" [disabled]="isLoading$ | async">
+        <span *ngIf="isLoading$ | async" class="animate-spin border-2 border-t-transparent border-white rounded-full w-4 h-4 mr-2"></span>
+        {{ (isLoading$ | async) ? 'Loading...' : 'Sign In' }}
+    </p-button>
 
     <span class="font-medium text-surface-600 dark:text-surface-200">
         Dont have an account?

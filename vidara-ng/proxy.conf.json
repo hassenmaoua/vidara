@@ -1,18 +1,10 @@
 {
-  "/auth-service": {
-    "target": "http://localhost:8082/api/v1",
+  "/api-gateway": {
+    "target": "http://localhost:8080/",
     "secure": false,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/auth-service": ""
-    }
-  },
-  "/content-service": {
-    "target": "http://localhost:8081/api/v1",
-    "secure": false,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/content-service": ""
+      "^/api-gateway": ""
     }
   }
 }

@@ -85,7 +85,7 @@
         <ng-container *ngIf="user; else loading">
             <p-avatar *ngIf="user.avatar; else initial" [image]="user.avatar | storageUrl" size="large" shape="circle"> </p-avatar>
             <ng-template #initial>
-                <p-avatar [label]="user.fullName?.charAt(0) || '?'" size="large" shape="circle"> </p-avatar>
+                <p-avatar [label]="user.fullName?.toLocaleUpperCase()?.charAt(0) || '?'" size="large" shape="circle"> </p-avatar>
             </ng-template>
 
             <div class="flex flex-col">

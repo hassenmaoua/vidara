@@ -10,7 +10,7 @@
     </parent>
     <groupId>edu.esprit</groupId>
     <artifactId>content-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>content-service</name>
     <description>content-service</description>
     <url/>

@@ -34,6 +34,7 @@ public class UserMapper {
 //                .phone(user.getPhone())
                 .enabled(user.isEnabled())
                 .accountLocked(user.isAccountLocked())
+                .lastLogin(user.getLastLogin())
                 .build();
     }
 
