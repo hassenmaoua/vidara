@@ -47,9 +47,7 @@ public class StorageService implements IStorageService {
         }
 
         // Validate file size
-        if (file.getSize() > properties.getMaxFileSize()) {
-            throw new StorageException("File size exceeds maximum limit");
-        }
+
 
         String filename = generateFilename(file.getOriginalFilename());
         Path destinationFile = this.rootLocation.resolve(filename)

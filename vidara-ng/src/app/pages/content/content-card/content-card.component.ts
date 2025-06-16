@@ -1,10 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { ImageModule } from 'primeng/image';
 import { MenuModule } from 'primeng/menu';
 import { PanelModule } from 'primeng/panel';
-import { PhotoService } from '../../service/photo.service';
 import { GalleriaModule } from 'primeng/galleria';
 import { FormsModule } from '@angular/forms';
 import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
@@ -14,47 +13,50 @@ import { FormatDatePipe } from '../../../pipes/format-date.pipe';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
+import { MenuItem, MessageService } from 'primeng/api';
+import { ContentModalComponent } from '../content-modal/content-modal.component';
+import { ContentService } from '../../../services/content.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
     selector: 'app-content',
-    imports: [FormsModule, RouterModule, PanelModule, AvatarModule, ButtonModule, MenuModule, ImageModule, GalleriaModule, SafeUrlPipe, StorageUrlPipe, FormatDatePipe, SkeletonModule],
+    imports: [FormsModule, RouterModule, PanelModule, AvatarModule, ButtonModule, MenuModule, ImageModule, GalleriaModule, SafeUrlPipe, StorageUrlPipe, FormatDatePipe, SkeletonModule, ContentModalComponent, ToastModule],
     templateUrl: './content-card.component.html',
-    styleUrl: './content-card.component.scss',
-    providers: [PhotoService]
+    styleUrl: './content-card.component.scss'
 })
 export class ContentComponent implements OnInit {
     @Input() content!: ContentDTO;
 
+    @Output() contentUpdated = new EventEmitter<ContentDTO>();
+    @Output() contentRemoved = new EventEmitter<number>();
+
+    items: MenuItem[] = [];
     showFullDescription: boolean = false;
 
-    items: { label?: string; icon?: string; separator?: boolean }[] = [];
-    images: any[] = [];
+    modalVisible = false;
+    contentToEdit: ContentDTO | null = null;
 
     constructor(
-        private readonly photoService: PhotoService,
-        private readonly sanitizer: DomSanitizer
+        private readonly sanitizer: DomSanitizer,
+        private readonly authService: AuthService,
+        private readonly contentService: ContentService,
+        private readonly messageService: MessageService
     ) {}
 
     ngOnInit() {
-        this.photoService.getImages().then((images) => {
-            this.images = images;
-        });
-
         this.items = [
             {
-                label: 'Refresh',
-                icon: 'pi pi-refresh'
-            },
-            {
-                label: 'Search',
-                icon: 'pi pi-search'
-            },
-            {
-                separator: true
+                label: 'Edit',
+                icon: 'pi pi-search',
+                command: () => this.openEditModal()
             },
             {
                 label: 'Delete',
-                icon: 'pi pi-times'
+                icon: 'pi pi-times',
+                styleClass: 'text-red-500',
+                id: String(this.content.id),
+                command: () => this.deleteContent()
             }
         ];
     }
@@ -94,38 +96,34 @@ export class ContentComponent implements OnInit {
         return this.content?.accessLevel === 'PAY_PER_VIEW';
     }
 
-    // get isSingleImage(): boolean {
-    //     return this.content.images.length === 1;
-    // }
+    get isAuthor(): boolean {
+        return this.authService.currentUser?.id === this.content.creatorId;
+    }
 
-    // get isMultipleImages(): boolean {
-    //     return this.content.images.length > 1;
-    // }
+    openEditModal() {
+        this.contentToEdit = this.content;
+        this.modalVisible = true;
+    }
 
-    // get galleriaImages(): any[] {
-    //     return this.content.images.map((img: string) => ({
-    //         itemImageSrc: img,
-    //         thumbnailImageSrc: img,
-    //         alt: 'Post image'
-    //     }));
-    // }
+    onContentUpdated(event: ContentDTO) {
+        // Refresh logic here (fetch latest content or emit event to parent)
+        this.contentUpdated.emit(event);
+    }
 
-    // galleriaResponsiveOptions: any[] = [
-    //     {
-    //         breakpoint: '1024px',
-    //         numVisible: 5
-    //     },
-    //     {
-    //         breakpoint: '960px',
-    //         numVisible: 4
-    //     },
-    //     {
-    //         breakpoint: '768px',
-    //         numVisible: 3
-    //     },
-    //     {
-    //         breakpoint: '560px',
-    //         numVisible: 1
-    //     }
-    // ];
+    deleteContent() {
+        this.contentService.deleteContent(this.content.id).subscribe({
+            next: (event) => {
+                setTimeout(() => {
+                    this.contentRemoved.emit(this.content.id);
+                }, 200);
+            },
+            error: (err) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Operation failed',
+                    detail: err.message
+                });
+            }
+        });
+    }
 }

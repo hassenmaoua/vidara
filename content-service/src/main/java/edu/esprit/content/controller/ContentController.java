@@ -12,6 +12,7 @@ import edu.esprit.content.service.storage.StorageService;
 import edu.esprit.content.utils.ContentMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,9 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.AccessDeniedException;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,14 +50,22 @@ public class ContentController {
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "price", required = false) Double price,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            HttpServletRequest request) {
 
         try {
 
-            long userId = 2L; // TODO: fetch user id from authentifcation context later when it is implemented
+            String userId = request.getHeader("X-User-Id");
+
+            UserDTO user = userClient.getByUsername(userId);
+
+            if (user == null) {
+                throw new AccessDeniedException("Unable to create content");
+            }
+
 
             ContentRequest contentRequest = ContentRequest.builder()
-                    .creatorId(userId)
+                    .creatorId(user.getId())
                     .accessLevel(accessLevel)
                     .title(title)
                     .description(description)
@@ -73,6 +81,9 @@ public class ContentController {
 
             // Handle file upload if present
             if (file != null && !file.isEmpty()) {
+                if (title == null || title.isEmpty()) {
+                    content.setTitle(file.getOriginalFilename());
+                }
                 String filename = storageService.store(file);
                 content.setStorageUrl(filename);
                 content.setContentType(ContentType.determineContentType(file.getContentType()));
@@ -125,6 +136,58 @@ public class ContentController {
         return ResponseEntity.ok(dtoPage);
     }
 
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Update existing content with optional file")
+    public ResponseEntity<Object> updateContentWithFile(
+            @PathVariable Long id,
+            @RequestParam(value = "accessLevel", required = false) AccessLevel accessLevel,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "price", required = false) Double price,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            HttpServletRequest request) {
+
+        try {
+            Content content = contentService.getContentById(id);
+            String userId = request.getHeader("X-User-Id");
+
+            UserDTO user = userClient.getByUsername(userId);
+
+            if (user == null || !Objects.equals(user.getId(), content.getCreatorId())) {
+                throw new AccessDeniedException("You do nt have access to modify this content");
+            }
+
+
+            if (title != null) content.setTitle(title);
+            if (description != null) content.setDescription(description);
+            if (price != null) content.setPrice(price);
+
+            if (accessLevel != null) {
+                content.setAccessLevel(accessLevel);
+                if (!accessLevel.equals(AccessLevel.PAY_PER_VIEW)) content.setPrice(null);
+                else if (price != null) content.setPrice(price);
+            }
+
+            if (file != null && !file.isEmpty()) {
+                String filename = storageService.store(file);
+                content.setStorageUrl(filename);
+                content.setContentType(ContentType.determineContentType(file.getContentType()));
+            }
+
+            Content updated = contentService.updateContent(content);
+            return ResponseEntity.ok(ContentMapper.toDto(updated));
+
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError()
+                    .body("File storage error: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Server error: " + e.getMessage());
+        }
+    }
+
+
     @GetMapping("/{id}")
     @Operation(summary = "Get content by ID")
     public ResponseEntity<ContentDTO> getContent(@PathVariable Long id) {
@@ -139,12 +202,6 @@ public class ContentController {
         List<Content> contentByCreator = contentService.getContentByCreator(creatorId);
         UserDTO creator = userClient.getUserById(creatorId);
         return ResponseEntity.ok(contentByCreator.stream().map(content -> ContentMapper.toDto(content, creator)).toList());
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "Update content")
-    public ResponseEntity<Content> updateContent(@PathVariable Long id, @RequestBody ContentRequest contentDetails) {
-        return ResponseEntity.ok(contentService.updateContent(id, contentDetails));
     }
 
     @DeleteMapping("/{id}")

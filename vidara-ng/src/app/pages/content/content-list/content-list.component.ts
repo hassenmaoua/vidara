@@ -3,10 +3,12 @@ import { AccessLevel, ContentDTO, ContentType } from '../../../models';
 import { ContentService } from '../../../services/content.service';
 import { ContentComponent } from '../content-card/content-card.component';
 import { CommonModule } from '@angular/common';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
     selector: 'app-content-list',
-    imports: [CommonModule, ContentComponent],
+    imports: [CommonModule, ContentComponent, ToastModule],
     templateUrl: './content-list.component.html',
     styleUrl: './content-list.component.scss'
 })
@@ -23,7 +25,10 @@ export class ContentListComponent {
 
     private readonly scrollListener = () => this.onWindowScroll();
 
-    constructor(private readonly contentService: ContentService) {}
+    constructor(
+        private readonly contentService: ContentService,
+        private readonly messageService: MessageService
+    ) {}
 
     ngOnInit(): void {
         this.loadContent();
@@ -60,6 +65,42 @@ export class ContentListComponent {
 
         if (height - position < threshold) {
             this.loadContent();
+        }
+    }
+
+    onContentUpdated(updatedContent: ContentDTO) {
+        const index = this.contents.findIndex((c) => c.id === updatedContent.id);
+        if (index !== -1) {
+            // Preserve the existing creator
+            const existingContent = this.contents[index];
+
+            // Merge updated fields while keeping the existing creator
+            const mergedContent = {
+                ...existingContent, // keep old content (e.g., creator)
+                ...updatedContent, // overwrite with updated fields
+                creator: existingContent.creator // enforce creator if overwritten
+            };
+
+            this.contents[index] = mergedContent;
+            this.contents = [...this.contents]; // trigger change detection
+        }
+    }
+
+    onContentRemoved(contentId: number): void {
+        const index = this.contents.findIndex((c) => c.id === contentId);
+
+        if (index !== -1) {
+            // Remove the item at the found index
+            this.contents.splice(index, 1);
+
+            // Trigger change detection by reassigning the array
+            this.contents = [...this.contents];
+
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Post deleted!',
+                detail: ''
+            });
         }
     }
 }

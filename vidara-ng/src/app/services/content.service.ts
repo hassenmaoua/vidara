@@ -19,7 +19,7 @@ export class ContentService {
     constructor(private readonly http: HttpClient) {}
 
     createContent(formData: FormData): Observable<any> {
-        return this.http.post(contentWS.createContentWithFile, formData, {
+        return this.http.post(contentWS.createContent, formData, {
             reportProgress: true,
             observe: 'events'
         });
@@ -37,5 +37,16 @@ export class ContentService {
         }
 
         return this.http.get<PageResponse<ContentDTO>>(contentWS.loadContent, { params });
+    }
+
+    updateContent(id: number, formData: FormData): Observable<any> {
+        return this.http.put(contentWS.updateContent.replace('{0}', String(id)), formData, {
+            reportProgress: true,
+            observe: 'events'
+        });
+    }
+
+    deleteContent(contentId: number): Observable<any> {
+        return this.http.delete(contentWS.deleteContent.replace('{0}', String(contentId)));
     }
 }
