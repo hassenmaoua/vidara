@@ -21,7 +21,7 @@ public interface IContentService {
 
     List<Content> getContentByCreator(Long creatorId);
 
-    Content updateContent(Long id, ContentRequest contentDetails);
+    Content updateContent(Content contentDetails);
 
     void deleteContent(Long id);
 

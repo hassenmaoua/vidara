@@ -8,8 +8,16 @@
 
     <!-- ACTION ICONS -->
     <ng-template #icons>
-        <span class="text-gray-500 dark:text-gray-400">{{ content.updatedAt | formatDate }}</span>
-        <i class="ms-4 pi pi-ellipsis-v"></i>
+        <span class="text-gray-500 dark:text-gray-400 me-4">{{ content.updatedAt | formatDate }}</span>
+        <p-button *ngIf="isAuthor" icon="pi pi-ellipsis-v" severity="secondary" rounded text (onClick)="menu.toggle($event)" />
+        <p-menu #menu [id]="'content_' + content.id + '_menu'" [model]="items" [popup]="true">
+            <ng-template #item let-item>
+                <a pRipple class="flex items-center p-menu-item-link">
+                    <span [class]="item.icon" [ngClass]="item.styleClass"></span>
+                    <span class="ml-2" [ngClass]="item.styleClass">{{ item.label }}</span>
+                </a>
+            </ng-template>
+        </p-menu>
     </ng-template>
 
     <!-- MEDIA CONTENT -->
@@ -52,6 +60,9 @@
             <p-button icon="pi pi-bookmark" severity="secondary" rounded text></p-button>
         </div>
     </ng-template>
+
+    <!-- Content Modal -->
+    <app-content-modal [(visible)]="modalVisible" [content]="contentToEdit" (contentSubmitted)="onContentUpdated($event)"></app-content-modal>
 </p-panel>
 
 <!-- LOADING PLACEHOLDER -->

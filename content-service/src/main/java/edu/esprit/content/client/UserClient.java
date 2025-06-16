@@ -17,5 +17,8 @@ public interface UserClient {
 
     @PostMapping("/users/batch")
     List<UserDTO> getUsersByIds(@RequestBody List<Long> ids);
+
+    @GetMapping("/users/{username}")
+    UserDTO getByUsername(@PathVariable("username") String username);
 }
 

@@ -3,6 +3,10 @@
     <div class="flex items-center mb-2">
         <p-avatar *ngIf="user?.avatar; else initial" [image]="user?.avatar | storageUrl" class="flex-none mr-2" size="xlarge" shape="circle"> </p-avatar>
         <p-button (onClick)="showDialog()" class="flex-1 custom-button" label="Create new post..." severity="secondary" outlined [fluid]="true" [style]="{ height: '4rem', 'font-size': '1.25rem' }"></p-button>
+
+        <ng-template #initial>
+            <p-avatar class="flex-none mr-2" [label]="user?.fullName?.toLocaleUpperCase()?.charAt(0) || '?'" size="xlarge" shape="circle"> </p-avatar>
+        </ng-template>
     </div>
 
     <!-- Separator -->
@@ -16,103 +20,4 @@
     </div>
 </div>
 
-<p-dialog header="Create Content" [closeOnEscape]="true" [dismissableMask]="true" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }">
-    <div class="flex items-center gap-3">
-        <p-avatar *ngIf="user?.avatar; else initial" [image]="user?.avatar | storageUrl" class="flex-none mr-2" size="xlarge" shape="circle"> </p-avatar>
-
-        <div class="flex flex-col w-full">
-            <span class="text-xl font-bold text-base"> {{ user?.fullName }}</span>
-            <div class="flex justify-between w-full">
-                <p-select [options]="selectOptions" [(ngModel)]="accessLevel" optionLabel="name" optionValue="value" size="small" [filter]="false" [showClear]="false" class="mt-1">
-                    <ng-template #selectedItem let-selectedOption>
-                        <div class="flex items-center gap-2">
-                            <i [class]="'pi ' + selectedOption.icon" style="width: 18px"></i>
-                            <div>{{ selectedOption.name }}</div>
-                        </div>
-                    </ng-template>
-                    <ng-template let-access #item>
-                        <div class="flex items-center gap-2">
-                            <i [class]="'pi ' + access.icon" style="width: 18px"></i>
-                            <div>{{ access.name }}</div>
-                        </div>
-                    </ng-template>
-                </p-select>
-                <div>
-                    <p-inputgroup [ngClass]="{ 'opacity-50': accessLevel != 'PAY_PER_VIEW' }">
-                        <p-inputnumber [disabled]="accessLevel != 'PAY_PER_VIEW'" size="small" placeholder="Price" />
-                        <p-inputgroup-addon>TND</p-inputgroup-addon>
-                    </p-inputgroup>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Title Input -->
-    <p-floatlabel variant="over" class="mt-8 mb-3">
-        <input pInputText id="title" [(ngModel)]="title" autocomplete="off" [fluid]="true" />
-        <label for="title">Title</label>
-    </p-floatlabel>
-
-    <p-editor [(ngModel)]="text" placeholder="Compose new post..." [style]="{ height: '90px' }">
-        <ng-template #header>
-            <!-- <span class="ql-formats">
-                <select class="ql-size" aria-label="Font Size">
-                    <option selected></option>
-
-                    <option value="large"></option>
-                </select>
-            </span> -->
-            <span class="ql-formats">
-                <button type="button" class="ql-bold" aria-label="Bold"></button>
-                <button type="button" class="ql-italic" aria-label="Italic"></button>
-                <button type="button" class="ql-underline" aria-label="Underline"></button>
-            </span>
-            <span class="ql-formats">
-                <button type="button" class="ql-my-image" aria-label="Upload Image">
-                    <i class="pi pi-image"></i>
-                </button>
-            </span>
-        </ng-template>
-    </p-editor>
-    <p-fileupload
-        #fu
-        name="file"
-        [customUpload]="true"
-        [auto]="false"
-        url="https://www.primefaces.org/cdn/api/upload.php"
-        (onUpload)="onUpload($event)"
-        [multiple]="true"
-        accept="image/*,video/*"
-        (onSelect)="onFileSelect($event)"
-        [multiple]="false"
-        maxFileSize="10000000"
-        mode="advanced"
-        chooseLabel="Browse"
-        showCancelButton="false"
-        showUploadButton="false"
-    >
-        <ng-template #header> </ng-template>
-        <ng-template #empty>
-            <div class="flex items-center justify-center flex-col">
-                <i class="pi pi-cloud-upload !border-2 !rounded-full !p-8 !text-4xl !text-muted-color"></i>
-                <p class="mt-6 mb-0">Drag and drop files to here to upload.</p>
-            </div>
-        </ng-template>
-        <ng-template #content>
-            <ul *ngIf="uploadedFile != null">
-                <!-- <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li> -->
-                <li>{{ uploadedFile.name }} - {{ uploadedFile.size }} bytes</li>
-            </ul>
-        </ng-template>
-    </p-fileupload>
-
-    <div class="gap-2 mt-6">
-        <p-button label="Post" (onClick)="submitContent()" [disabled]="!accessLevel || !text" [fluid]="true" />
-    </div>
-</p-dialog>
-
-<ng-template #initial>
-    <p-avatar class="flex-none mr-2" [label]="user?.fullName?.toLocaleUpperCase()?.charAt(0) || '?'" size="xlarge" shape="circle"> </p-avatar>
-</ng-template>
-
-<p-toast />
+<app-content-modal [visible]="visible" (visibleChange)="closeDialog()"></app-content-modal>

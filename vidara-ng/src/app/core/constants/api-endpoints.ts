@@ -11,6 +11,8 @@ export const authWS = {
 
 export const contentWS = {
     loadContent: '/api-gateway/contents',
-    createContentWithFile: '/api-gateway/contents',
+    createContent: '/api-gateway/contents',
+    updateContent: '/api-gateway/contents/{0}',
+    deleteContent: '/api-gateway/contents/{0}',
     STORAGE_URL: '/api-gateway/public/files/{0}'
 };

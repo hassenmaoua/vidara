@@ -53,12 +53,15 @@ public class ContentMapper {
                 .build();
     }
 
-    public static void updateEntityFromRequest(ContentRequest contentRequest, Content content) {
-        content.setTitle(contentRequest.getTitle());
-        content.setDescription(contentRequest.getDescription());
-
-        if (contentRequest.getCreatorId() != null) {
-            content.setCreatorId(contentRequest.getCreatorId());
+    public static void updateEntityFromRequest(Content contentRequest, Content content) {
+        if (contentRequest == null || content == null) {
+            return;
         }
+        if (contentRequest.getAccessLevel() != null) content.setAccessLevel(contentRequest.getAccessLevel());
+        if (contentRequest.getTitle() != null) content.setTitle(contentRequest.getTitle());
+        if (contentRequest.getDescription() != null) content.setDescription(contentRequest.getDescription());
+        if (contentRequest.getPrice() != null) content.setPrice(contentRequest.getPrice());
+        if (contentRequest.getStorageUrl() != null) content.setStorageUrl(contentRequest.getStorageUrl());
+        if (contentRequest.getContentType() != null) content.setContentType(contentRequest.getContentType());
     }
 }

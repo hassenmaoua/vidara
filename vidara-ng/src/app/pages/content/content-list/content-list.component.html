@@ -1,5 +1,11 @@
 <ng-container *ngFor="let item of contents">
-    <app-content [content]="item"></app-content>
+    <app-content [content]="item" (contentUpdated)="onContentUpdated($event)" (contentRemoved)="onContentRemoved($event)"></app-content>
     <br />
 </ng-container>
 <app-content *ngIf="isLoading"></app-content>
+<ng-container *ngIf="!isLoading && contents.length === 0">
+    <div class="card text-center">
+        <img src="assets/images/empty-feed.svg" alt="empty-feed" class="h-[15rem] mx-auto" />
+        <span class="text-bold text-xl text-gray-500">No content to display</span>
+    </div>
+</ng-container>

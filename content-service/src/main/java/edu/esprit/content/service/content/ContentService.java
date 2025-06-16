@@ -24,7 +24,7 @@ public class ContentService implements IContentService {
     private final ContentRepository contentRepository;
 
     @Override
-    public Page<Content> getContentByFilters(List<Long> creatorIds, AccessLevel accessLevel, ContentType contentType, Pageable pageable)  {
+    public Page<Content> getContentByFilters(List<Long> creatorIds, AccessLevel accessLevel, ContentType contentType, Pageable pageable) {
         Specification<Content> spec = Specification
                 .where(ContentSpecifications.hasCreatorIds(creatorIds))
                 .and(ContentSpecifications.hasAccessLevel(accessLevel))
@@ -54,11 +54,8 @@ public class ContentService implements IContentService {
         return contentRepository.findByCreatorId(creatorId);
     }
 
-    @Transactional
     @Override
-    public Content updateContent(Long id, ContentRequest contentDetails) {
-        Content content = getContentById(id);
-        ContentMapper.updateEntityFromRequest(contentDetails, content);
+    public Content updateContent(Content content) {
         return contentRepository.save(content);
     }
 
