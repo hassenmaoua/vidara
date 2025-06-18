@@ -1,0 +1,99 @@
+services:
+  mysql-auth:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_auth_data:/var/lib/mysql
+    networks:
+      - vidara-external
+
+  mysql-content:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: content_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_content_data:/var/lib/mysql
+    networks:
+      - vidara-external
+
+  eureka-server:
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - vidara-external
+    depends_on:
+      - mysql-auth
+      - mysql-content
+
+  authentication-service:
+    build: ./authentication-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-auth:3306/auth_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    networks:
+      - vidara-external
+    depends_on:
+      - mysql-auth
+      - eureka-server
+
+  content-service:
+    build: ./content-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-content:3306/content_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - vidara-external
+    depends_on:
+      - mysql-content
+      - eureka-server
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=eureka-server
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    networks:
+      - vidara-external
+    depends_on:
+      - eureka-server
+      - authentication-service
+      - content-service
+
+  vidara-ng:
+    build: ./vidara-ng
+    ports:
+      - "4200:80"
+    networks:
+      - vidara-external
+    depends_on:
+      - api-gateway
+
+volumes:
+  mysql_auth_data:
+  mysql_content_data:
+
+networks:
+  vidara-external:
+    driver: bridge

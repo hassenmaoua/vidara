@@ -40,6 +40,12 @@
                     },
                     "configurations": {
                         "production": {
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "aot": true,
+                            "extractLicenses": true,
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -52,7 +58,13 @@
                                     "maximumError": "4kb"
                                 }
                             ],
-                            "outputHashing": "all"
+                            "scripts": [],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environment/environment.ts",
+                                    "with": "src/environment/environment.prod.ts"
+                                }
+                            ]
                         },
                         "development": {
                             "optimization": false,
@@ -72,7 +84,7 @@
                             "buildTarget": "vidara-ng:build:development"
                         }
                     },
-                     "options": {
+                    "options": {
                         "proxyConfig": "proxy.conf.json"
                     },
                     "defaultConfiguration": "development"
@@ -105,6 +117,6 @@
         }
     },
     "cli": {
-      "analytics": false
+        "analytics": false
     }
 }

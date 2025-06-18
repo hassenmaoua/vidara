@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
 import { AuthService } from '../../pages/auth/auth.service';
+import { environment } from '../../../environment/environment';
 
 @Component({
     selector: 'app-menu',
@@ -30,9 +31,11 @@ export class AppMenu {
                     { label: 'Subscriptions', icon: 'pi pi-fw pi-users', routerLink: ['/subscriptions'] },
                     { label: 'My Profile', icon: 'pi pi-fw pi-user', routerLink: ['/' + this.authService.currentUser?.username] }
                 ]
-            },
+            }
+        ];
 
-            {
+        if (!environment.production) {
+            this.model.push({
                 label: 'Dev kits',
                 items: [
                     {
@@ -106,67 +109,7 @@ export class AppMenu {
                         ]
                     }
                 ]
-            }
-            // {
-            //     label: 'Hierarchy',
-            //     items: [
-            //         {
-            //             label: 'Submenu 1',
-            //             icon: 'pi pi-fw pi-bookmark',
-            //             items: [
-            //                 {
-            //                     label: 'Submenu 1.1',
-            //                     icon: 'pi pi-fw pi-bookmark',
-            //                     items: [
-            //                         { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-            //                         { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-            //                         { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-            //                     ]
-            //                 },
-            //                 {
-            //                     label: 'Submenu 1.2',
-            //                     icon: 'pi pi-fw pi-bookmark',
-            //                     items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
-            //                 }
-            //             ]
-            //         },
-            //         {
-            //             label: 'Submenu 2',
-            //             icon: 'pi pi-fw pi-bookmark',
-            //             items: [
-            //                 {
-            //                     label: 'Submenu 2.1',
-            //                     icon: 'pi pi-fw pi-bookmark',
-            //                     items: [
-            //                         { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-            //                         { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
-            //                     ]
-            //                 },
-            //                 {
-            //                     label: 'Submenu 2.2',
-            //                     icon: 'pi pi-fw pi-bookmark',
-            //                     items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
-            //                 }
-            //             ]
-            //         }
-            //     ]
-            // },
-            // {
-            //     label: 'Get Started',
-            //     items: [
-            //         {
-            //             label: 'Documentation',
-            //             icon: 'pi pi-fw pi-book',
-            //             routerLink: ['/documentation']
-            //         },
-            //         {
-            //             label: 'View Source',
-            //             icon: 'pi pi-fw pi-github',
-            //             url: 'https://github.com/primefaces/vidara-ng',
-            //             target: '_blank'
-            //         }
-            //     ]
-            // }
-        ];
+            });
+        }
     }
 }
