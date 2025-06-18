@@ -5,7 +5,7 @@ import { UserDTO } from '../../models/userDTO.model';
 import { authWS } from '../../core/constants/api-endpoints';
 import { Router } from '@angular/router';
 import { AuthModel } from './models/auth.model';
-import { environment } from '../../../environments/environment';
+import { environment } from 'src/environment/environment';
 
 @Injectable({
     providedIn: 'root'

@@ -1,0 +1,25 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="START - ApiGateway" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ALTERNATIVE_JRE_PATH" value="17" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE" value="http://localhost:8761/eureka" />
+      <env name="JWT_SECRET_KEY" value="AfN0tQk6qvTV9Aw1n9zNKzSGJ8GPa0WofcOZSBsgZN3UcWyWGsyZjJfAtROMi9x7G3Y0ClLVMQBH9DryzUT-eA" />
+    </envs>
+    <module name="api-gateway" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="edu.esprit.apigateway.ApiGatewayApplication" />
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+      </ENTRIES>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
