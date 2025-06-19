@@ -25,7 +25,7 @@ public class ContentDTO {
     private Double price;
     private String title;
     private String description;
-    private boolean isActive = true;
+    private boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

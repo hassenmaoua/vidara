@@ -25,9 +25,10 @@ public class ContentRequest {
     @Schema(description = "ID of the content creator", example = "123")
     private Long creatorId;
 
-
     private Double price;
 
     private AccessLevel accessLevel;
+
+    private boolean active;
 
 }

@@ -1,4 +1,4 @@
-<p-dialog [header]="content ? 'Update content' : 'Create content'" [closeOnEscape]="true" [dismissableMask]="true" [modal]="true" [(visible)]="visible" (onHide)="handleHide()" (onShow)="handleShow()" [style]="{ width: '50rem' }">
+<p-dialog [header]="contentForUpdate.id != 0 ? 'Update content' : 'Create content'" [closeOnEscape]="true" [dismissableMask]="true" [modal]="true" [(visible)]="visible" (onHide)="handleHide()" (onShow)="handleShow()" [style]="{ width: '50rem' }">
     <div class="flex items-center gap-3">
         <p-avatar *ngIf="user?.avatar; else initial" [image]="user?.avatar | storageUrl" class="flex-none mr-2" size="xlarge" shape="circle"> </p-avatar>
 
@@ -22,7 +22,7 @@
                 </p-select>
                 <div>
                     <p-inputgroup [ngClass]="{ 'opacity-50': accessLevel != 'PAY_PER_VIEW' }">
-                        <p-inputnumber [disabled]="accessLevel != 'PAY_PER_VIEW'" size="small" placeholder="Price" />
+                        <p-inputnumber [disabled]="accessLevel != 'PAY_PER_VIEW'" size="small" placeholder="Price" [(ngModel)]="price" />
                         <p-inputgroup-addon>TND</p-inputgroup-addon>
                     </p-inputgroup>
                 </div>
@@ -98,10 +98,15 @@
         </ng-template>
     </p-fileupload>
 
-    <div class="gap-2 mt-6">
-        <p-button icon="pi pi-sparkles" label="Improve by AI" severity="primary" outlined styleClass="mb-3" [fluid]="true" [disabled]="!accessLevel || !text"> </p-button>
+    <div class="flex justify-start items-center mt-3">
+        <p-toggleswitch id="active" [(ngModel)]="active" />
+        <label for="active" class="ms-2">Publish</label>
+    </div>
 
-        <p-button [label]="contentForUpdate.id != 0 ? 'Update' : 'Post'" (onClick)="submit()" [disabled]="!accessLevel || !text" [fluid]="true" />
+    <div class="gap-2 mt-2">
+        <p-button icon="pi pi-sparkles" label="Improve by AI" severity="primary" outlined styleClass="mb-3" [fluid]="true" [disabled]="!isValid"> </p-button>
+
+        <p-button [label]="contentForUpdate.id != 0 ? 'Update' : 'Post'" (onClick)="submit()" [disabled]="!isValid" [fluid]="true" />
     </div>
 </p-dialog>
 

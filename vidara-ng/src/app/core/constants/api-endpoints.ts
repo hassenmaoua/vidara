@@ -11,6 +11,9 @@ export const authWS = {
 
 export const contentWS = {
     loadContent: '/api-gateway/contents',
+    getContentByCreator: '/api-gateway/contents/creator/{0}',
+    unpublishContent: '/api-gateway/contents/{0}/unpublish',
+    publishContent: '/api-gateway/contents/{0}/publish',
     createContent: '/api-gateway/contents',
     updateContent: '/api-gateway/contents/{0}',
     deleteContent: '/api-gateway/contents/{0}',

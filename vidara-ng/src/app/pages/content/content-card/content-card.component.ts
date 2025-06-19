@@ -48,8 +48,13 @@ export class ContentComponent implements OnInit {
         this.items = [
             {
                 label: 'Edit',
-                icon: 'pi pi-search',
+                icon: 'pi pi-pen-to-square',
                 command: () => this.openEditModal()
+            },
+            {
+                label: this.content.active ? 'Unpublishe' : 'Publish',
+                icon: this.content.active ? 'pi pi-minus-circle' : 'pi pi-share-alt',
+                command: () => this.togglePublish()
             },
             {
                 label: 'Delete',
@@ -108,6 +113,31 @@ export class ContentComponent implements OnInit {
     onContentUpdated(event: ContentDTO) {
         // Refresh logic here (fetch latest content or emit event to parent)
         this.contentUpdated.emit(event);
+    }
+
+    togglePublish(): void {
+        const observer$ = this.content.active ? this.contentService.unpublishContent(this.content.id) : this.contentService.publishContent(this.content.id);
+
+        observer$.subscribe({
+            next: (event) => {
+                this.messageService.clear('publish');
+                this.messageService.add({
+                    key: 'publish',
+                    severity: 'success',
+                    summary: 'Content is ' + this.content.active ? 'unpublished!' : 'published!'
+                });
+                setTimeout(() => {
+                    this.contentUpdated.emit(event.body);
+                }, 200);
+            },
+            error: (err) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Operation failed',
+                    detail: err.message
+                });
+            }
+        });
     }
 
     deleteContent() {
