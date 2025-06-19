@@ -18,7 +18,8 @@ public class ContentMapper {
                 .title(contentRequest.getTitle())
                 .description(contentRequest.getDescription())
                 .creatorId(contentRequest.getCreatorId())
-                .isActive(true)
+                .price(contentRequest.getPrice())
+                .active(contentRequest.isActive())
                 .build();
     }
 
@@ -31,7 +32,7 @@ public class ContentMapper {
                 .creatorId(content.getCreatorId())
                 .createdAt(content.getCreatedAt())
                 .updatedAt(content.getUpdatedAt())
-                .isActive(content.isActive())
+                .active(content.isActive())
                 .storageUrl(content.getStorageUrl())
                 .build();
     }
@@ -46,7 +47,7 @@ public class ContentMapper {
                 .price(content.getPrice())
                 .title(content.getTitle())
                 .description(content.getDescription())
-                .isActive(content.isActive())
+                .active(content.isActive())
                 .createdAt(content.getCreatedAt())
                 .updatedAt(content.getUpdatedAt())
                 .creator(user)

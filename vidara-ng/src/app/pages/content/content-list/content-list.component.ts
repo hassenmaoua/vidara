@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 })
 export class ContentListComponent {
     @Input() followedCreatorIds: number[] = [0, 1, 2, 3];
+    @Input() creatorId: number | undefined;
     @Input() contentType: ContentType | undefined;
     @Input() accessLevel: AccessLevel | undefined;
 
@@ -44,7 +45,11 @@ export class ContentListComponent {
 
         this.isLoading = true;
 
-        this.contentService.loadContent(this.followedCreatorIds, this.contentType, this.accessLevel, this.page, this.size).subscribe({
+        const request$ = this.creatorId
+            ? this.contentService.getContentByCreator(this.creatorId, this.contentType, this.accessLevel, this.page, this.size)
+            : this.contentService.loadContent(this.followedCreatorIds, this.contentType, this.accessLevel, this.page, this.size);
+
+        request$.subscribe({
             next: (response) => {
                 this.contents = [...this.contents, ...response.content];
                 this.lastPage = response.last;

@@ -8,6 +8,7 @@
 
     <!-- ACTION ICONS -->
     <ng-template #icons>
+        <span *ngIf="!content.active" class="italic text-gray-400 me-2">Unpublished</span>
         <span class="text-gray-500 dark:text-gray-400 me-4">{{ content.updatedAt | formatDate }}</span>
         <p-button *ngIf="isAuthor" icon="pi pi-ellipsis-v" severity="secondary" rounded text (onClick)="menu.toggle($event)" />
         <p-menu #menu [id]="'content_' + content.id + '_menu'" [model]="items" [popup]="true">
@@ -21,7 +22,7 @@
     </ng-template>
 
     <!-- MEDIA CONTENT -->
-    <div class="mt-4 relative">
+    <div class="mt-4 rounded relative overflow-hidden">
         <ng-container *ngIf="hasImages || hasVideo">
             <img *ngIf="hasImages" [src]="content.storageUrl | storageUrl" alt="img" class="w-full max-h-100 object-cover rounded" [ngClass]="{ 'blur-lg pointer-events-none select-none': isPayPerView }" />
 
@@ -44,7 +45,7 @@
 
     <div class="mt-2 text-base break-words" [innerHTML]="displayDescription"></div>
 
-    <div *ngIf="content.description.length > 200" class="mt-1">
+    <div *ngIf="content.description && content.description.length > 200" class="mt-1">
         <button (click)="toggleDescription()" class="text-blue-500 hover:underline text-xs">
             {{ showFullDescription ? 'Show less' : 'Show more' }}
         </button>

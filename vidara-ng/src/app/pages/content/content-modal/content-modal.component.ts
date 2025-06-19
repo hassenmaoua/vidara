@@ -22,6 +22,7 @@ import { ContentDTO } from '../../../models';
 import { UserDTO } from '../../../models/userDTO.model';
 import { HttpEventType } from '@angular/common/http';
 import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 @Component({
     selector: 'app-content-modal',
     standalone: true,
@@ -42,7 +43,8 @@ import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
         InputGroupAddonModule,
         InputNumberModule,
         StorageUrlPipe,
-        SafeUrlPipe
+        SafeUrlPipe,
+        ToggleSwitchModule
     ],
     templateUrl: './content-modal.component.html',
     styleUrl: './content-modal.component.scss'
@@ -63,6 +65,7 @@ export class ContentModalComponent implements OnInit {
     price: number | null = null;
     accessLevel: 'PUBLIC' | 'SUBSCRIBER_ONLY' | 'PAY_PER_VIEW' = 'SUBSCRIBER_ONLY';
     uploadedFile: File | null = null;
+    active: boolean = false;
     selectOptions = [
         { name: 'Public', value: 'PUBLIC', icon: 'pi pi-globe' },
         { name: 'Subscriber Only', value: 'SUBSCRIBER_ONLY', icon: 'pi pi-lock' },
@@ -83,12 +86,14 @@ export class ContentModalComponent implements OnInit {
         this.title = content.title ?? '';
         this.text = content.description ?? '';
         this.accessLevel = content.accessLevel ?? 'SUBSCRIBER_ONLY';
+        this.active = content.active ?? false;
         this.price = content.price ?? null;
     }
 
     submit(): void {
         const formData = new FormData();
         formData.append('accessLevel', this.accessLevel);
+        formData.append('active', String(this.active));
         if (this.title) formData.append('title', this.title);
         if (this.text) formData.append('description', this.text);
         if (this.price !== null) formData.append('price', String(this.price));
@@ -199,5 +204,17 @@ export class ContentModalComponent implements OnInit {
                 updatedAt: ''
             }
         );
+    }
+
+    get isValid(): boolean {
+        if (!this.uploadedFile || !this.accessLevel) {
+            return false;
+        }
+
+        if (this.accessLevel === 'PAY_PER_VIEW') {
+            return this.price !== null && this.price > 0;
+        }
+
+        return true;
     }
 }

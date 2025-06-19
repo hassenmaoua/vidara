@@ -12,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface ContentRepository extends JpaRepository<Content, Long>, JpaSpecificationExecutor<Content> {
-    Page<Content> findByCreatorIdIn(List<Long> creatorIds, Pageable pageable);
-    List<Content> findByCreatorId(Long creatorId);
+    List<Content> findByCreatorIdOrderByCreatedAtDesc(Long creatorId);
+    long countByCreatorId(Long creatorId);
 }
