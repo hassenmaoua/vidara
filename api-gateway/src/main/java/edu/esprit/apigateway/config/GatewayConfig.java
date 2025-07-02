@@ -38,6 +38,11 @@ public class GatewayConfig {
                         .path("/contents/**")
                         .filters(f -> f.filter(authFilter))
                         .uri("lb://content-service"))
+                
+                .route("analytics-service", r -> r
+                        .path("/analytics/**")
+                        .filters(f -> f.filter(authFilter))
+                        .uri("lb://analytics-service"))
 
                 .build();
     }
